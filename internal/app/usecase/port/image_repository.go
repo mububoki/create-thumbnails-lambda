@@ -8,5 +8,5 @@ import (
 
 type ImageRepository interface {
 	Save(context.Context, *domain.Image) error
-	Search(ctx context.Context, name, format string) (*domain.Image, error)
+	Find(ctx context.Context, name string, format domain.ImageFormat, isThumbnail bool) (*domain.Image, error)
 }
