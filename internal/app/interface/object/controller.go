@@ -10,17 +10,19 @@ import (
 )
 
 type Controller struct {
-	interactor *image.Interactor
+	interactor          *image.Interactor
+	bucketNameThumbnail string
 }
 
-func NewController(interactor *image.Interactor) *Controller {
+func NewController(interactor *image.Interactor, bucketNameThumbnail string) *Controller {
 	return &Controller{
-		interactor: interactor,
+		interactor:          interactor,
+		bucketNameThumbnail: bucketNameThumbnail,
 	}
 }
 
 func (c *Controller) CreateThumbnail(ctx context.Context, key string, bucketName string) error {
-	if bucketName == bucketNameThumbnail {
+	if bucketName == c.bucketNameThumbnail {
 		return xerrors.New("src bucket and dst bucket is the same")
 	}
 

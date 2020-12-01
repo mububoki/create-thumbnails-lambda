@@ -8,17 +8,15 @@ import (
 	"golang.org/x/xerrors"
 )
 
-const (
-	rate = 1 / 2
-)
-
 type Interactor struct {
 	repo port.ImageRepository
+	rate float64
 }
 
-func NewInteractor(repo port.ImageRepository) *Interactor {
+func NewInteractor(repo port.ImageRepository, rate float64) *Interactor {
 	return &Interactor{
 		repo: repo,
+		rate: rate,
 	}
 }
 
@@ -28,7 +26,7 @@ func (i *Interactor) CreateThumbnail(ctx context.Context, name string, format do
 		return xerrors.Errorf("failed to Search: %w", err)
 	}
 
-	dst, err := src.CreateThumbnail(rate)
+	dst, err := src.CreateThumbnail(i.rate)
 	if err != nil {
 		return xerrors.Errorf("failed to CreateThumbnail: %w", err)
 	}

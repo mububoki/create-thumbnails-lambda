@@ -9,20 +9,19 @@ import (
 	"golang.org/x/xerrors"
 )
 
-const (
-	bucketNameOriginal  = "original"
-	bucketNameThumbnail = "thumbnail"
-)
-
 var _ port.ImageRepository = (*Repository)(nil)
 
 type Repository struct {
-	storage gateway.ObjectStorage
+	storage             gateway.ObjectStorage
+	bucketNameOriginal  string
+	bucketNameThumbnail string
 }
 
-func NewRepository(storage gateway.ObjectStorage) *Repository {
+func NewRepository(storage gateway.ObjectStorage, bucketNameOriginal string, bucketNameThumbnail string) *Repository {
 	return &Repository{
-		storage: storage,
+		storage:             storage,
+		bucketNameOriginal:  bucketNameOriginal,
+		bucketNameThumbnail: bucketNameThumbnail,
 	}
 }
 
@@ -32,11 +31,11 @@ func (repo *Repository) Save(ctx context.Context, img *domain.Image) error {
 		return xerrors.Errorf("failed to Encode: %w", err)
 	}
 
-	return repo.storage.Save(ctx, object, keyImage(img.Name, img.Format), bucketNameImage(img.IsThumbnail))
+	return repo.storage.Save(ctx, object, keyImage(img.Name, img.Format), repo.bucketNameImage(img.IsThumbnail))
 }
 
 func (repo *Repository) Find(ctx context.Context, name string, format domain.ImageFormat, isThumbnail bool) (*domain.Image, error) {
-	bytesIMG, err := repo.storage.Find(ctx, keyImage(name, format), bucketNameImage(isThumbnail))
+	bytesIMG, err := repo.storage.Find(ctx, keyImage(name, format), repo.bucketNameImage(isThumbnail))
 	if err != nil {
 		return nil, xerrors.Errorf("failed to Find: %w", err)
 	}
@@ -53,10 +52,10 @@ func keyImage(name string, format domain.ImageFormat) string {
 	return name + "." + format.String()
 }
 
-func bucketNameImage(isThumbnail bool) string {
+func (repo *Repository) bucketNameImage(isThumbnail bool) string {
 	if isThumbnail {
-		return bucketNameThumbnail
+		return repo.bucketNameThumbnail
 	}
 
-	return bucketNameOriginal
+	return repo.bucketNameOriginal
 }
