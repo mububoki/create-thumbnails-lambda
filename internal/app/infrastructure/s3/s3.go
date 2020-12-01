@@ -1,20 +1,24 @@
+//go:generate mockgen -package=mock_$GOPACKAGE -destination=../../mock/$GOPACKAGE/$GOFILE github.com/aws/aws-sdk-go/service/s3/s3iface S3API
+
 package s3
 
 import (
 	"bytes"
 	"context"
+	"io/ioutil"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/gateway"
 	"golang.org/x/xerrors"
-	"io/ioutil"
 )
 
 var _ gateway.ObjectStorage = (*Handler)(nil)
 
 type Handler struct {
-	s3 *s3.S3
+	s3 s3iface.S3API
 }
 
 func NewHandler() (*Handler, error) {
