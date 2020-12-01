@@ -5,6 +5,7 @@ import (
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/gateway"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/usecase/port"
 	"golang.org/x/xerrors"
 )
 
@@ -13,11 +14,19 @@ const (
 	bucketNameThumbnail = "thumbnail"
 )
 
-type ObjectRepository struct {
+var _ port.ImageRepository = (*Repository)(nil)
+
+type Repository struct {
 	storage gateway.ObjectStorage
 }
 
-func (repo *ObjectRepository) Save(ctx context.Context, img *domain.Image) error {
+func NewRepository(storage gateway.ObjectStorage) *Repository {
+	return &Repository{
+		storage: storage,
+	}
+}
+
+func (repo *Repository) Save(ctx context.Context, img *domain.Image) error {
 	object, err := img.Encode()
 	if err != nil {
 		return xerrors.Errorf("failed to Encode: %w", err)
@@ -26,14 +35,14 @@ func (repo *ObjectRepository) Save(ctx context.Context, img *domain.Image) error
 	return repo.storage.Save(ctx, object, keyImage(img.Name, img.Format), bucketNameImage(img.IsThumbnail))
 }
 
-func (repo *ObjectRepository) Find(ctx context.Context, name string, format domain.ImageFormat, isThumbnail bool) (*domain.Image, error) {
+func (repo *Repository) Find(ctx context.Context, name string, format domain.ImageFormat, isThumbnail bool) (*domain.Image, error) {
 	bytesIMG, err := repo.storage.Find(ctx, keyImage(name, format), bucketNameImage(isThumbnail))
 	if err != nil {
 		return nil, xerrors.Errorf("failed to Find: %w", err)
 	}
 
-	var img *domain.Image
-	if err := img.Decode(bytesIMG, name, isThumbnail); err != nil {
+	img, err := domain.DecodeImage(bytesIMG, name, isThumbnail)
+	if err != nil {
 		return nil, xerrors.Errorf("failed to Decode: %w", err)
 	}
 

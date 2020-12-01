@@ -10,10 +10,20 @@ import (
 )
 
 type Controller struct {
-	interactor image.Interactor
+	interactor *image.Interactor
 }
 
-func (c *Controller) CreateThumbnail(ctx context.Context, key string) error {
+func NewController(interactor *image.Interactor) *Controller {
+	return &Controller{
+		interactor: interactor,
+	}
+}
+
+func (c *Controller) CreateThumbnail(ctx context.Context, key string, bucketName string) error {
+	if bucketName == bucketNameThumbnail {
+		return xerrors.New("src bucket and dst bucket is the same")
+	}
+
 	name, format, err := extractNameAndFormat(key)
 	if err != nil {
 		return xerrors.Errorf("faield to extractNameAndFormat: %w", err)
