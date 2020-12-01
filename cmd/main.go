@@ -1,5 +1,11 @@
 package main
 
+import "log"
+
 func main() {
-	build().CreateThumbnail()
+	handler, err := build()
+	if err != nil {
+		log.Panicf("failed to build: %s", err.Error())
+	}
+	handler.CreateThumbnail()
 }

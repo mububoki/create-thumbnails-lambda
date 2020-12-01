@@ -3,22 +3,29 @@ package s3
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
-
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/gateway"
 	"golang.org/x/xerrors"
+	"io/ioutil"
 )
 
 var _ gateway.ObjectStorage = (*Handler)(nil)
 
 type Handler struct {
-	s3 s3.S3
+	s3 *s3.S3
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler() (*Handler, error) {
+	sess, err := session.NewSession()
+	if err != nil {
+		return nil, xerrors.Errorf("failed to NewSession: %w", err)
+	}
+
+	return &Handler{
+		s3: s3.New(sess),
+	}, nil
 }
 
 func (h *Handler) Save(ctx context.Context, object []byte, key, bucketName string) error {

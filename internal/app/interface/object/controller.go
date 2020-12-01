@@ -28,7 +28,7 @@ func (c *Controller) CreateThumbnail(ctx context.Context, key string, bucketName
 
 	name, format, err := extractNameAndFormat(key)
 	if err != nil {
-		return xerrors.Errorf("faield to extractNameAndFormat: %w", err)
+		return xerrors.Errorf("failed to extractNameAndFormat: %w", err)
 	}
 
 	return c.interactor.CreateThumbnail(ctx, name, format)

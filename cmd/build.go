@@ -6,13 +6,18 @@ import (
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/s3"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/object"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/usecase/image"
+	"golang.org/x/xerrors"
 )
 
-func build() *lambda.Handler {
-	s3Handler := s3.NewHandler()
+func build() (*lambda.Handler, error) {
+	s3Handler, err := s3.NewHandler()
+	if err != nil {
+		return nil, xerrors.Errorf("failed to NewHandler: %w", err)
+	}
+
 	objectRepository := object.NewRepository(s3Handler, env.Object.BucketNameOriginal, env.Object.BucketNameThumbnail)
 	imageInteractor := image.NewInteractor(objectRepository, env.Image.Rate)
 	objectController := object.NewController(imageInteractor, env.Object.BucketNameThumbnail)
 
-	return lambda.NewHandler(objectController)
+	return lambda.NewHandler(objectController), nil
 }
