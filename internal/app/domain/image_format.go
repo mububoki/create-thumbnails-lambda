@@ -40,7 +40,7 @@ func (f *ImageFormat) UnmarshalText(text []byte) error {
 	return nil
 }
 
-func (f ImageFormat) Encode(img image.Image) ([]byte, error) {
+func (f ImageFormat) encode(img image.Image) ([]byte, error) {
 	dst := new(bytes.Buffer)
 
 	switch f {

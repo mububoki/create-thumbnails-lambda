@@ -37,13 +37,13 @@ func (i *Image) CreateThumbnail(rate float64) (*Image, error) {
 }
 
 func (i *Image) Encode() ([]byte, error) {
-	return i.Format.Encode(i.Image)
+	return i.Format.encode(i.Image)
 }
 
 func DecodeImage(src []byte, name string, isThumbnail bool) (*Image, error) {
 	img, f, err := image.Decode(bytes.NewReader(src))
 	if err != nil {
-		return nil, xerrors.Errorf("faield to Decode: %w", err)
+		return nil, xerrors.Errorf("failed to Decode: %w", err)
 	}
 
 	var format ImageFormat
