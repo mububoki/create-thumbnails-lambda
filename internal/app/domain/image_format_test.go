@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golang.org/x/xerrors"
 )
 
@@ -14,17 +15,17 @@ func TestImageFormat_String(t *testing.T) {
 		expected string
 	}{
 		{
-			name:     "OK jpeg",
+			name:     "OK: jpeg",
 			format:   ImageFormatJPEG,
 			expected: "jpg",
 		},
 		{
-			name:     "OK gif",
+			name:     "OK: gif",
 			format:   ImageFormatGIF,
 			expected: "gif",
 		},
 		{
-			name:     "NG initial value",
+			name:     "NG: initial value",
 			format:   ImageFormat(0),
 			expected: "",
 		},
@@ -46,22 +47,22 @@ func TestImageFormat_UnmarshalText(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			name:     "OK jpg",
+			name:     "OK: jpg",
 			text:     []byte("jpg"),
 			expected: ImageFormatJPEG,
 		},
 		{
-			name:     "OK jpeg",
+			name:     "OK: jpeg",
 			text:     []byte("jpeg"),
 			expected: ImageFormatJPEG,
 		},
 		{
-			name:     "OK gif",
+			name:     "OK: gif",
 			text:     []byte("gif"),
 			expected: ImageFormatGIF,
 		},
 		{
-			name:        "NG empty",
+			name:        "NG: empty",
 			expectedErr: xerrors.New("invalid ImageFormat"),
 		},
 	}
@@ -72,7 +73,9 @@ func TestImageFormat_UnmarshalText(t *testing.T) {
 			err := actual.UnmarshalText(tc.text)
 			if tc.expectedErr != nil {
 				assert.EqualError(t, err, tc.expectedErr.Error())
+				return
 			}
+			require.NoError(t, err)
 			assert.Equal(t, tc.expected, actual)
 		})
 	}
