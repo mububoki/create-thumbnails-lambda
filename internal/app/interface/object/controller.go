@@ -4,17 +4,21 @@ import (
 	"context"
 	"strings"
 
-	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
-	"github.com/mububoki/create-thumbnails-lambda/internal/app/usecase/image"
 	"golang.org/x/xerrors"
+
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/controller"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/usecase/interactor"
 )
 
+var _ controller.ObjectController = (*Controller)(nil)
+
 type Controller struct {
-	interactor          *image.Interactor
+	interactor          interactor.ImageInteractor
 	bucketNameThumbnail string
 }
 
-func NewController(interactor *image.Interactor, bucketNameThumbnail string) *Controller {
+func NewController(interactor interactor.ImageInteractor, bucketNameThumbnail string) *Controller {
 	return &Controller{
 		interactor:          interactor,
 		bucketNameThumbnail: bucketNameThumbnail,

@@ -1,8 +1,10 @@
-//go:generate mockgen -source=$GOFILE -package=mock_$GOPACKAGE -destination=../../mock/$GOPACKAGE/$GOFILE
+//go:generate mockgen -source=$GOFILE -package=mock_$GOPACKAGE -destination=../../mock/mock_$GOPACKAGE/$GOFILE
 
 package gateway
 
-import "context"
+import (
+	"context"
+)
 
 type ObjectStorage interface {
 	Save(ctx context.Context, object []byte, key, bucketName string) error

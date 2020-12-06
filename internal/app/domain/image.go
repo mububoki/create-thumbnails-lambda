@@ -16,8 +16,8 @@ type Image struct {
 }
 
 func (i *Image) CreateThumbnail(rate float64) (*Image, error) {
-	if rate < 0 || rate >= 1 {
-		return nil, xerrors.New("rate must be in [0, 1)")
+	if rate <= 0 || rate >= 1 {
+		return nil, xerrors.New("rate must be in (0, 1)")
 	}
 
 	if i.IsThumbnail {
@@ -37,6 +37,10 @@ func (i *Image) CreateThumbnail(rate float64) (*Image, error) {
 }
 
 func (i *Image) Encode() ([]byte, error) {
+	if i.Image == nil {
+		return nil, xerrors.New("misspecified image")
+	}
+
 	return i.Format.encode(i.Image)
 }
 

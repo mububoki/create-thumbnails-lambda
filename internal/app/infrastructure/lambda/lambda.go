@@ -5,15 +5,16 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/object"
 	"golang.org/x/xerrors"
+
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/controller"
 )
 
 type Handler struct {
-	controller *object.Controller
+	controller controller.ObjectController
 }
 
-func NewHandler(controller *object.Controller) *Handler {
+func NewHandler(controller controller.ObjectController) *Handler {
 	return &Handler{
 		controller: controller,
 	}

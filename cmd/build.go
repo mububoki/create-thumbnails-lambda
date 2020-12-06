@@ -1,12 +1,13 @@
 package main
 
 import (
+	"golang.org/x/xerrors"
+
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/env"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/lambda"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/s3"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/object"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/usecase/image"
-	"golang.org/x/xerrors"
 )
 
 func build() (*lambda.Handler, error) {
