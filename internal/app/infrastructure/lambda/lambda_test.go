@@ -51,29 +51,29 @@ func TestHandler_handleLambdaS3Events(t *testing.T) {
 	}
 
 	testCases := []struct {
-		name        string
-		event       events.S3Event
-		mockErrs    []error
-		expectedErr error
+		name                string
+		event               events.S3Event
+		createThumbnailErrs []error
+		expectedErr         error
 	}{
 		{
-			name:     "OK",
-			event:    event,
-			mockErrs: []error{nil, nil},
+			name:                "OK",
+			event:               event,
+			createThumbnailErrs: []error{nil, nil},
 		},
 		{
-			name:        "NG",
-			event:       event,
-			mockErrs:    []error{nil, someErr},
-			expectedErr: xerrors.Errorf("failed to CreateThumbnail: %w", someErr),
+			name:                "NG",
+			event:               event,
+			createThumbnailErrs: []error{nil, someErr},
+			expectedErr:         xerrors.Errorf("failed to CreateThumbnail: %w", someErr),
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			require.Len(t, tc.mockErrs, len(tc.event.Records))
+			require.Len(t, tc.createThumbnailErrs, len(tc.event.Records))
 			for i, record := range tc.event.Records {
-				mockObjectController.EXPECT().CreateThumbnail(ctx, record.S3.Object.Key, record.S3.Bucket.Name).Return(tc.mockErrs[i])
+				mockObjectController.EXPECT().CreateThumbnail(ctx, record.S3.Object.Key, record.S3.Bucket.Name).Return(tc.createThumbnailErrs[i])
 			}
 
 			err := handler.handleLambdaS3Event(ctx, tc.event)
@@ -84,5 +84,4 @@ func TestHandler_handleLambdaS3Events(t *testing.T) {
 			require.NoError(t, err)
 		})
 	}
-
 }
