@@ -24,7 +24,7 @@ func NewInteractor(repo port.ImageRepository, rate float64) *Interactor {
 func (i *Interactor) CreateThumbnail(ctx context.Context, name string, format domain.ImageFormat) error {
 	src, err := i.repo.Find(ctx, name, format, false)
 	if err != nil {
-		return xerrors.Errorf("failed to Search: %w", err)
+		return xerrors.Errorf("failed to Find: %w", err)
 	}
 
 	dst, err := src.CreateThumbnail(i.rate)
