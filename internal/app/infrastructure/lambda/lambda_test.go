@@ -20,8 +20,7 @@ func TestHandler_handleLambdaS3Events(t *testing.T) {
 	defer mockController.Finish()
 
 	mockObjectController := mock_controller.NewMockObjectController(mockController)
-	handler := new(Handler)
-	handler.controller = mockObjectController
+	handler := NewHandler(mockObjectController)
 
 	someErr := xerrors.New("some error")
 
