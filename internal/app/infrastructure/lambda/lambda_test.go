@@ -11,6 +11,7 @@ import (
 	"golang.org/x/xerrors"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_controller"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/testutil"
 )
 
 func TestHandler_handleLambdaS3Events(t *testing.T) {
@@ -21,8 +22,6 @@ func TestHandler_handleLambdaS3Events(t *testing.T) {
 
 	mockObjectController := mock_controller.NewMockObjectController(mockController)
 	handler := NewHandler(mockObjectController)
-
-	someErr := xerrors.New("some error")
 
 	event := events.S3Event{
 		Records: []events.S3EventRecord{
@@ -63,8 +62,8 @@ func TestHandler_handleLambdaS3Events(t *testing.T) {
 		{
 			name:                "NG",
 			event:               event,
-			createThumbnailErrs: []error{nil, someErr},
-			expectedErr:         xerrors.Errorf("failed to CreateThumbnail: %w", someErr),
+			createThumbnailErrs: []error{nil, testutil.ErrSome},
+			expectedErr:         xerrors.Errorf("failed to CreateThumbnail: %w", testutil.ErrSome),
 		},
 	}
 

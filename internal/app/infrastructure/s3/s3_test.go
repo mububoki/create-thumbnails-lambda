@@ -14,6 +14,7 @@ import (
 	"golang.org/x/xerrors"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_s3"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/testutil"
 )
 
 func TestHandler_Save(t *testing.T) {
@@ -30,8 +31,6 @@ func TestHandler_Save(t *testing.T) {
 	bucketName := "bucketName"
 	key := "key"
 
-	someErr := xerrors.New("some error")
-
 	testCases := []struct {
 		name         string
 		putObjectErr error
@@ -42,8 +41,8 @@ func TestHandler_Save(t *testing.T) {
 		},
 		{
 			name:         "NG",
-			putObjectErr: someErr,
-			expectedErr:  xerrors.Errorf("failed to PutObjectWithContext: %w", someErr),
+			putObjectErr: testutil.ErrSome,
+			expectedErr:  xerrors.Errorf("failed to PutObjectWithContext: %w", testutil.ErrSome),
 		},
 	}
 
@@ -79,8 +78,6 @@ func TestHandler_Find(t *testing.T) {
 	bucketName := "bucketName"
 	key := "key"
 
-	someErr := xerrors.New("some error")
-
 	testCases := []struct {
 		name         string
 		getObjectRet *s3.GetObjectOutput
@@ -97,8 +94,8 @@ func TestHandler_Find(t *testing.T) {
 		},
 		{
 			name:         "NG: failed to GetObjectWithContext",
-			getObjectErr: someErr,
-			expectedErr:  xerrors.Errorf("failed to GetObjectWithContext: %w", someErr),
+			getObjectErr: testutil.ErrSome,
+			expectedErr:  xerrors.Errorf("failed to GetObjectWithContext: %w", testutil.ErrSome),
 		},
 	}
 
