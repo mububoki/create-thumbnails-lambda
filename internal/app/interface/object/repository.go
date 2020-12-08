@@ -3,10 +3,11 @@ package object
 import (
 	"context"
 
+	"golang.org/x/xerrors"
+
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/gateway"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/usecase/port"
-	"golang.org/x/xerrors"
 )
 
 var _ port.ImageRepository = (*Repository)(nil)
