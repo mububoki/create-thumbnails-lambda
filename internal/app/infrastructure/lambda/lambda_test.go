@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/xerrors"
 
-	"github.com/mububoki/create-thumbnails-lambda/internal/app/mock/mock_controller"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_controller"
 )
 
 func TestHandler_handleLambdaS3Events(t *testing.T) {

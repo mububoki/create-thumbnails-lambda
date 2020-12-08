@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/xerrors"
 
-	"github.com/mububoki/create-thumbnails-lambda/internal/app/mock/mock_s3"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_s3"
 )
 
 func TestHandler_Save(t *testing.T) {
