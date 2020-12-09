@@ -41,12 +41,7 @@ func (repo *Repository) Find(ctx context.Context, name string, format domain.Ima
 		return nil, xerrors.Errorf("failed to Find: %w", err)
 	}
 
-	img, err := domain.DecodeImage(bytesIMG, name, isThumbnail)
-	if err != nil {
-		return nil, xerrors.Errorf("failed to Decode: %w", err)
-	}
-
-	return img, nil
+	return domain.DecodeImage(bytesIMG, name, isThumbnail)
 }
 
 func keyImage(name string, format domain.ImageFormat) string {
