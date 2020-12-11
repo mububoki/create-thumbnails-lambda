@@ -7,6 +7,8 @@ creates thumbnails,
 and
 put them to another bucket.
 
+support: jpeg, gif, png
+
 ## environment variables
 
 | name | default value | note |

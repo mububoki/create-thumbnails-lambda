@@ -5,11 +5,13 @@ import (
 	"image"
 	"image/gif"
 	"image/jpeg"
+	"image/png"
 	"testing"
 
 	"github.com/mububoki/graffiti"
 	gif2 "github.com/mububoki/graffiti/gif"
 	jpeg2 "github.com/mububoki/graffiti/jpeg"
+	png2 "github.com/mububoki/graffiti/png"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/xerrors"
@@ -76,6 +78,8 @@ func TestImage_Encode(t *testing.T) {
 	require.NoError(t, jpeg.Encode(bJPEG, img, &jpeg.Options{Quality: 100}))
 	bGIF := new(bytes.Buffer)
 	require.NoError(t, gif.Encode(bGIF, img, nil))
+	bPNG := new(bytes.Buffer)
+	require.NoError(t, png.Encode(bPNG, img))
 
 	testCases := []struct {
 		name        string
@@ -100,6 +104,14 @@ func TestImage_Encode(t *testing.T) {
 			expected: bGIF.Bytes(),
 		},
 		{
+			name: "OK: png",
+			img: &Image{
+				Format: ImageFormatPNG,
+				Image:  img,
+			},
+			expected: bPNG.Bytes(),
+		},
+		{
 			name: "NG: nil image",
 			img: &Image{
 				Image: nil,
@@ -107,7 +119,7 @@ func TestImage_Encode(t *testing.T) {
 			expectedErr: xerrors.New("misspecified image"),
 		},
 		{
-			name: "NG: too large image",
+			name: "NG: too large image jpeg",
 			img: &Image{
 				Format: ImageFormatJPEG,
 				Image:  image.NewRGBA(image.Rect(0, 0, 1<<16, 1<<16)),
@@ -115,12 +127,20 @@ func TestImage_Encode(t *testing.T) {
 			expectedErr: xerrors.Errorf("failed to jpeg.Encode: %w", xerrors.New("jpeg: image is too large to encode")),
 		},
 		{
-			name: "NG: too large image",
+			name: "NG: too large image gif",
 			img: &Image{
 				Format: ImageFormatGIF,
 				Image:  image.NewRGBA(image.Rect(0, 0, 1<<16, 1<<16)),
 			},
 			expectedErr: xerrors.Errorf("failed to gif.Encode: %w", xerrors.New("gif: image is too large to encode")),
+		},
+		{
+			name: "NG: invalid format png",
+			img: &Image{
+				Format: ImageFormatPNG,
+				Image:  image.NewRGBA(image.Rect(0, 0, 1<<32, 1<<32)),
+			},
+			expectedErr: xerrors.Errorf("failed to png.Encode: %w", xerrors.New("png: invalid format: invalid image size: 4294967296x4294967296")),
 		},
 		{
 			name: "NG: initial format",
@@ -151,10 +171,14 @@ func TestDecodeImage(t *testing.T) {
 	require.NoError(t, jpeg2.EncodeRandom(bJPEG, image.Rect(0, 0, 10, 10), &jpeg.Options{Quality: 100}))
 	bGIF := new(bytes.Buffer)
 	require.NoError(t, gif2.EncodeRandom(bGIF, image.Rect(0, 0, 10, 10), nil))
+	bPNG := new(bytes.Buffer)
+	require.NoError(t, png2.EncodeRandom(bPNG, image.Rect(0, 0, 10, 10)))
 
 	imgIMGJPEG, _, err := image.Decode(bytes.NewReader(bJPEG.Bytes()))
 	require.NoError(t, err)
 	imgIMGGIF, _, err := image.Decode(bytes.NewReader(bGIF.Bytes()))
+	require.NoError(t, err)
+	imgIMGPNG, _, err := image.Decode(bytes.NewReader(bPNG.Bytes()))
 	require.NoError(t, err)
 
 	imgJPEG := &Image{
@@ -166,6 +190,11 @@ func TestDecodeImage(t *testing.T) {
 		Name:   name,
 		Format: ImageFormatGIF,
 		Image:  imgIMGGIF,
+	}
+	imgPNG := &Image{
+		Name:   name,
+		Format: ImageFormatPNG,
+		Image:  imgIMGPNG,
 	}
 
 	testCases := []struct {
@@ -183,6 +212,11 @@ func TestDecodeImage(t *testing.T) {
 			name:     "OK: gif",
 			b:        bGIF.Bytes(),
 			expected: imgGIF,
+		},
+		{
+			name:     "OK: png",
+			b:        bPNG.Bytes(),
+			expected: imgPNG,
 		},
 		{
 			name:        "NG: failed to Decode",
