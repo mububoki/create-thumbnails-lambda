@@ -5,11 +5,13 @@ import (
 	"image"
 	"image/gif"
 	"image/jpeg"
+	"image/png"
 	"testing"
 
 	"github.com/mububoki/graffiti"
 	gif2 "github.com/mububoki/graffiti/gif"
 	jpeg2 "github.com/mububoki/graffiti/jpeg"
+	png2 "github.com/mububoki/graffiti/png"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/xerrors"
@@ -76,6 +78,8 @@ func TestImage_Encode(t *testing.T) {
 	require.NoError(t, jpeg.Encode(bJPEG, img, &jpeg.Options{Quality: 100}))
 	bGIF := new(bytes.Buffer)
 	require.NoError(t, gif.Encode(bGIF, img, nil))
+	bPNG := new(bytes.Buffer)
+	require.NoError(t, png.Encode(bPNG, img))
 
 	testCases := []struct {
 		name        string
@@ -98,6 +102,14 @@ func TestImage_Encode(t *testing.T) {
 				Image:  img,
 			},
 			expected: bGIF.Bytes(),
+		},
+		{
+			name: "OK: png",
+			img: &Image{
+				Format: ImageFormatPNG,
+				Image:  img,
+			},
+			expected: bPNG.Bytes(),
 		},
 		{
 			name: "NG: nil image",
@@ -151,10 +163,14 @@ func TestDecodeImage(t *testing.T) {
 	require.NoError(t, jpeg2.EncodeRandom(bJPEG, image.Rect(0, 0, 10, 10), &jpeg.Options{Quality: 100}))
 	bGIF := new(bytes.Buffer)
 	require.NoError(t, gif2.EncodeRandom(bGIF, image.Rect(0, 0, 10, 10), nil))
+	bPNG := new(bytes.Buffer)
+	require.NoError(t, png2.EncodeRandom(bPNG, image.Rect(0, 0, 10, 10)))
 
 	imgIMGJPEG, _, err := image.Decode(bytes.NewReader(bJPEG.Bytes()))
 	require.NoError(t, err)
 	imgIMGGIF, _, err := image.Decode(bytes.NewReader(bGIF.Bytes()))
+	require.NoError(t, err)
+	imgIMGPNG, _, err := image.Decode(bytes.NewReader(bPNG.Bytes()))
 	require.NoError(t, err)
 
 	imgJPEG := &Image{
@@ -166,6 +182,11 @@ func TestDecodeImage(t *testing.T) {
 		Name:   name,
 		Format: ImageFormatGIF,
 		Image:  imgIMGGIF,
+	}
+	imgPNG := &Image{
+		Name:   name,
+		Format: ImageFormatPNG,
+		Image:  imgIMGPNG,
 	}
 
 	testCases := []struct {
@@ -183,6 +204,11 @@ func TestDecodeImage(t *testing.T) {
 			name:     "OK: gif",
 			b:        bGIF.Bytes(),
 			expected: imgGIF,
+		},
+		{
+			name:     "OK: png",
+			b:        bPNG.Bytes(),
+			expected: imgPNG,
 		},
 		{
 			name:        "NG: failed to Decode",
