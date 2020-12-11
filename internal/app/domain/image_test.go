@@ -119,7 +119,7 @@ func TestImage_Encode(t *testing.T) {
 			expectedErr: xerrors.New("misspecified image"),
 		},
 		{
-			name: "NG: too large image",
+			name: "NG: too large image jpeg",
 			img: &Image{
 				Format: ImageFormatJPEG,
 				Image:  image.NewRGBA(image.Rect(0, 0, 1<<16, 1<<16)),
@@ -127,7 +127,7 @@ func TestImage_Encode(t *testing.T) {
 			expectedErr: xerrors.Errorf("failed to jpeg.Encode: %w", xerrors.New("jpeg: image is too large to encode")),
 		},
 		{
-			name: "NG: too large image",
+			name: "NG: too large image gif",
 			img: &Image{
 				Format: ImageFormatGIF,
 				Image:  image.NewRGBA(image.Rect(0, 0, 1<<16, 1<<16)),
