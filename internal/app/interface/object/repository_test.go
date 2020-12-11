@@ -10,6 +10,7 @@ import (
 	"github.com/mububoki/graffiti"
 	"github.com/mububoki/graffiti/gif"
 	"github.com/mububoki/graffiti/jpeg"
+	"github.com/mububoki/graffiti/png"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/xerrors"
@@ -72,6 +73,23 @@ func TestRepository_Save(t *testing.T) {
 			},
 		},
 		{
+			name: "OK: PNG and IsNotThumbnail",
+			image: &domain.Image{
+				Name:   "test",
+				Format: domain.ImageFormatPNG,
+				Image:  validIMG,
+			},
+		},
+		{
+			name: "OK: PNG and IsThumbnail",
+			image: &domain.Image{
+				Name:        "test",
+				Format:      domain.ImageFormatPNG,
+				IsThumbnail: true,
+				Image:       validIMG,
+			},
+		},
+		{
 			name:        "NG: nil Image",
 			image:       &domain.Image{},
 			expectedErr: xerrors.Errorf("failed to Encode: %w", xerrors.New("misspecified image")),
@@ -128,6 +146,8 @@ func TestRepository_Find(t *testing.T) {
 	require.NoError(t, jpeg.EncodeRandom(bJPEG, image.Rect(0, 0, 10, 10), nil))
 	bGIF := new(bytes.Buffer)
 	require.NoError(t, gif.EncodeRandom(bGIF, image.Rect(0, 0, 10, 10), nil))
+	bPNG := new(bytes.Buffer)
+	require.NoError(t, png.EncodeRandom(bPNG, image.Rect(0, 0, 10, 10)))
 
 	testCases := []struct {
 		name        string
@@ -150,6 +170,13 @@ func TestRepository_Find(t *testing.T) {
 			format:      domain.ImageFormatGIF,
 			isThumbnail: true,
 			bytesIMG:    bGIF.Bytes(),
+		},
+		{
+			name:        "OK: png and isThumbnail",
+			imageName:   "test",
+			format:      domain.ImageFormatPNG,
+			isThumbnail: true,
+			bytesIMG:    bPNG.Bytes(),
 		},
 		{
 			name:        "NG: failed to repository.Find",

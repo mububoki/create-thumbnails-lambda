@@ -50,6 +50,12 @@ func TestInteractor_CreateThumbnail(t *testing.T) {
 			img:       img,
 		},
 		{
+			name:      "OK: png",
+			imageName: "test",
+			format:    domain.ImageFormatPNG,
+			img:       img,
+		},
+		{
 			name:        "NG: failed to Find",
 			findErr:     testutil.ErrSome,
 			expectedErr: xerrors.Errorf("failed to Find: %w", testutil.ErrSome),

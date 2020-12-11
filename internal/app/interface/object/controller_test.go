@@ -48,6 +48,11 @@ func TestController_CreateThumbnail(t *testing.T) {
 			bucketName: env.Object.BucketNameOriginal,
 		},
 		{
+			name:       "OK: png",
+			key:        "test.png",
+			bucketName: env.Object.BucketNameOriginal,
+		},
+		{
 			name:        "NG: src bucket == dst bucket",
 			bucketName:  env.Object.BucketNameThumbnail,
 			expectedErr: xerrors.New("src bucket and dst bucket is the same"),

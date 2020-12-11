@@ -135,6 +135,14 @@ func TestImage_Encode(t *testing.T) {
 			expectedErr: xerrors.Errorf("failed to gif.Encode: %w", xerrors.New("gif: image is too large to encode")),
 		},
 		{
+			name: "NG: invalid format png",
+			img: &Image{
+				Format: ImageFormatPNG,
+				Image:  image.NewRGBA(image.Rect(0, 0, 1<<32, 1<<32)),
+			},
+			expectedErr: xerrors.Errorf("failed to png.Encode: %w", xerrors.New("png: invalid format: invalid image size: 4294967296x4294967296")),
+		},
+		{
 			name: "NG: initial format",
 			img: &Image{
 				Format: ImageFormat(0),
