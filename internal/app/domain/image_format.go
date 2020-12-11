@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/gif"
 	"image/jpeg"
+	"image/png"
 
 	"golang.org/x/xerrors"
 )
@@ -14,6 +15,7 @@ type ImageFormat uint8
 const (
 	ImageFormatJPEG = iota + 1
 	ImageFormatGIF
+	ImageFormatPNG
 )
 
 func (f ImageFormat) String() string {
@@ -22,6 +24,8 @@ func (f ImageFormat) String() string {
 		return "jpg"
 	case ImageFormatGIF:
 		return "gif"
+	case ImageFormatPNG:
+		return "png"
 	}
 
 	return ""
@@ -33,6 +37,8 @@ func (f *ImageFormat) UnmarshalText(text []byte) error {
 		*f = ImageFormatJPEG
 	case "gif":
 		*f = ImageFormatGIF
+	case "png":
+		*f = ImageFormatPNG
 	default:
 		return xerrors.New("invalid ImageFormat")
 	}
@@ -51,6 +57,10 @@ func (f ImageFormat) encode(img image.Image) ([]byte, error) {
 	case ImageFormatGIF:
 		if err := gif.Encode(b, img, nil); err != nil {
 			return nil, xerrors.Errorf("failed to gif.Encode: %w", err)
+		}
+	case ImageFormatPNG:
+		if err := png.Encode(b, img); err != nil {
+			return nil, xerrors.Errorf("failed to png.Encode: %w", err)
 		}
 	default:
 		return nil, xerrors.New("not supported image format")

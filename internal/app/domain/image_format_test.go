@@ -25,6 +25,11 @@ func TestImageFormat_String(t *testing.T) {
 			expected: "gif",
 		},
 		{
+			name:     "OK: png",
+			format:   ImageFormatPNG,
+			expected: "png",
+		},
+		{
 			name:     "NG: initial value",
 			format:   ImageFormat(0),
 			expected: "",
@@ -60,6 +65,11 @@ func TestImageFormat_UnmarshalText(t *testing.T) {
 			name:     "OK: gif",
 			text:     []byte("gif"),
 			expected: ImageFormatGIF,
+		},
+		{
+			name:     "OK: png",
+			text:     []byte("png"),
+			expected: ImageFormatPNG,
 		},
 		{
 			name:        "NG: empty",
