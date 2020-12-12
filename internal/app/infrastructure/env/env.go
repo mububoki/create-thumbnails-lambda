@@ -8,6 +8,7 @@ import (
 
 var Image ImageEnv
 var Object ObjectEnv
+var AuthNZ AuthNZEnv
 
 type ImageEnv struct {
 	Rate float64 `envconfig:"RATE" default:"0.5"`
@@ -18,11 +19,18 @@ type ObjectEnv struct {
 	BucketNameThumbnail string `envconfig:"BUCKET_NAME_THUMBNAIL" default:"thumbnail.images.mububoki"`
 }
 
+type AuthNZEnv struct {
+	RoleName string `envconfig:"ROLE_NAME" default:"lambda-role-create-thumbnails"`
+}
+
 func init() {
 	if err := envconfig.Process("IMAGE", &Image); err != nil {
 		log.Panicf("failed to Process: %s", err.Error())
 	}
 	if err := envconfig.Process("OBJECT", &Object); err != nil {
+		log.Panicf("failed to Process: %s", err.Error())
+	}
+	if err := envconfig.Process("AUTHNZ", &AuthNZ); err != nil {
 		log.Panicf("failed to Process: %s", err.Error())
 	}
 }
