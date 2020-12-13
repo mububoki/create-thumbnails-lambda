@@ -2,6 +2,7 @@ package iam
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -25,6 +26,10 @@ func NewHandler() (*Handler, error) {
 	}, nil
 }
 
+func (h *Handler) CreateRole(ctx context.Context, roleName string, serviceName string, actions []string) error {
+	return h.createRole(ctx, roleName, assumeRolePolicyDocument(serviceName, actions))
+}
+
 func (h *Handler) createRole(ctx context.Context, roleName string, assumeRolePolicyDocument string) error {
 	if _, err := h.iam.CreateRoleWithContext(ctx, &iam.CreateRoleInput{
 		AssumeRolePolicyDocument: aws.String(assumeRolePolicyDocument),
@@ -34,4 +39,28 @@ func (h *Handler) createRole(ctx context.Context, roleName string, assumeRolePol
 	}
 
 	return nil
+}
+
+const formatAssumeRolePolicyDocument = `{
+    	"AssumeRolePolicyDocument": {
+    	"Version" : "2012-10-17",
+        	"Statement": [ {
+            	"Effect": "Allow",
+                "Principal": {
+                	"Service": [ "%s" ]
+				},
+                "Action": %s
+			} ]
+		}
+	}`
+
+func assumeRolePolicyDocument(serviceName string, actions []string) string {
+	a := "["
+
+	for _, action := range actions {
+		a += `"` + action + `",`
+	}
+	a = a[:len(a)-1] + "]"
+
+	return fmt.Sprintf(formatAssumeRolePolicyDocument, serviceName, a)
 }
