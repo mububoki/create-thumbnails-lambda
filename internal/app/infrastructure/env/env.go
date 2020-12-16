@@ -30,7 +30,7 @@ func init() {
 	if err := envconfig.Process("OBJECT", &Object); err != nil {
 		log.Panicf("failed to Process: %s", err.Error())
 	}
-	if err := envconfig.Process("AUTHNZ", &AuthNZ); err != nil {
+	if err := envconfig.Process("AUTH_NZ", &AuthNZ); err != nil {
 		log.Panicf("failed to Process: %s", err.Error())
 	}
 }
