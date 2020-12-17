@@ -9,7 +9,11 @@ import (
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/iam/iamiface"
 	"golang.org/x/xerrors"
+
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/gateway"
 )
+
+var _ gateway.AuthNZ = (*Handler)(nil)
 
 type Handler struct {
 	iam iamiface.IAMAPI
