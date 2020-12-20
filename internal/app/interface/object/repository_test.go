@@ -17,7 +17,7 @@ import (
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/env"
-	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_gateway"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mockgateway"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/testutil"
 )
 
@@ -27,7 +27,7 @@ func TestRepository_Save(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockRepository := mock_gateway.NewMockObjectStorage(mockController)
+	mockRepository := mockgateway.NewMockObjectStorage(mockController)
 	repository := NewRepository(mockRepository, env.Object.BucketNameOriginal, env.Object.BucketNameThumbnail)
 
 	validIMG := graffiti.RandomImage(image.Rect(0, 0, 10, 10))
@@ -139,7 +139,7 @@ func TestRepository_Find(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockRepository := mock_gateway.NewMockObjectStorage(mockController)
+	mockRepository := mockgateway.NewMockObjectStorage(mockController)
 	repository := NewRepository(mockRepository, env.Object.BucketNameOriginal, env.Object.BucketNameThumbnail)
 
 	bJPEG := new(bytes.Buffer)

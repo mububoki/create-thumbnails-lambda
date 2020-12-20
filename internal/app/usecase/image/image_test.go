@@ -13,7 +13,7 @@ import (
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/env"
-	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_port"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mockport"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/testutil"
 )
 
@@ -23,7 +23,7 @@ func TestInteractor_CreateThumbnail(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockRepo := mock_port.NewMockImageRepository(mockController)
+	mockRepo := mockport.NewMockImageRepository(mockController)
 	interactor := NewInteractor(mockRepo, env.Image.Rate)
 
 	img := graffiti.RandomImage(image.Rect(0, 0, 10, 10))

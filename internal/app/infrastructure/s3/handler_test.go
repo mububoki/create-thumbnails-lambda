@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/xerrors"
 
-	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_s3"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mocks3"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/testutil"
 )
 
@@ -23,7 +23,7 @@ func TestHandler_Save(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockAPI := mock_s3.NewMockS3API(mockController)
+	mockAPI := mocks3.NewMockS3API(mockController)
 	handler := new(Handler)
 	handler.s3 = mockAPI
 
@@ -70,7 +70,7 @@ func TestHandler_Find(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockAPI := mock_s3.NewMockS3API(mockController)
+	mockAPI := mocks3.NewMockS3API(mockController)
 	handler := new(Handler)
 	handler.s3 = mockAPI
 

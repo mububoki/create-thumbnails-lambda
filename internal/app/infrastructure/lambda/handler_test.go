@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/xerrors"
 
-	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_controller"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mockcontroller"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/testutil"
 )
 
@@ -20,7 +20,7 @@ func TestHandler_handleLambdaS3Events(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockObjectController := mock_controller.NewMockObjectController(mockController)
+	mockObjectController := mockcontroller.NewMockObjectController(mockController)
 	handler := NewHandler(mockObjectController)
 
 	event := events.S3Event{

@@ -1,4 +1,4 @@
-//go:generate mockgen -package=mock_$GOPACKAGE -destination=../../test/mock/mock_$GOPACKAGE/s3_api.go github.com/aws/aws-sdk-go/service/s3/s3iface S3API
+//go:generate mockgen -package=mock$GOPACKAGE -destination=../../test/mock/mock$GOPACKAGE/s3_api.go github.com/aws/aws-sdk-go/service/s3/s3iface S3API
 
 package s3
 

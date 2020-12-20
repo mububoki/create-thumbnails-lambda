@@ -1,3 +1,5 @@
+//go:generate mockgen -package=mock$GOPACKAGE -destination=../../test/mock/mock$GOPACKAGE/iam_api.go github.com/aws/aws-sdk-go/service/iam/iamiface IAMAPI
+
 package iam
 
 import (

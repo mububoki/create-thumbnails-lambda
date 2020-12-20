@@ -12,7 +12,7 @@ import (
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/env"
-	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_interactor"
+	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mockinteractor"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/testutil"
 )
 
@@ -22,7 +22,7 @@ func TestController_CreateThumbnail(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockInteractor := mock_interactor.NewMockImageInteractor(mockController)
+	mockInteractor := mockinteractor.NewMockImageInteractor(mockController)
 	controller := NewController(mockInteractor, env.Object.BucketNameThumbnail)
 
 	testCases := []struct {
