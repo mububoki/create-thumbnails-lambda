@@ -21,7 +21,7 @@ type ObjectEnv struct {
 
 type AuthNZEnv struct {
 	RoleName string   `envconfig:"ROLE_NAME" default:"lambda-role-create-thumbnails"`
-	Actions  []string `envconfig:"ACTIONS" default:"[s3:PutObject, s3;GetObject]"`
+	Actions  []string `envconfig:"ACTIONS" default:"s3:PutObject,s3:GetObject"`
 }
 
 func init() {
