@@ -48,16 +48,14 @@ func (h *Handler) createRole(ctx context.Context, roleName string, assumeRolePol
 }
 
 const formatAssumeRolePolicyDocument = `{
-    	"AssumeRolePolicyDocument": {
-    	"Version" : "2012-10-17",
-        	"Statement": [ {
-            	"Effect": "Allow",
-                "Principal": {
-                	"Service": [ "%s" ]
-				},
-                "Action": %s
-			} ]
-		}
+		"Version" : "2012-10-17",
+		"Statement": [ {
+			"Effect": "Allow",
+			"Principal": {
+				"Service": [ "%s" ]
+			},
+			"Action": %s
+		} ]
 	}`
 
 func assumeRolePolicyDocument(serviceName string, actions []string) string {
