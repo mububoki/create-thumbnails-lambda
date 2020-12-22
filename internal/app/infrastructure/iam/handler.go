@@ -54,7 +54,7 @@ const formatAssumeRolePolicyDocument = `{
 			"Principal": {
 				"Service": [ "%s" ]
 			},
-			"Action": %s
+			"Action": "sts:AssumeRole"
 		} ]
 	}`
 
@@ -66,5 +66,5 @@ func assumeRolePolicyDocument(serviceName string, actions []string) string {
 	}
 	a = a[:len(a)-1] + "]"
 
-	return fmt.Sprintf(formatAssumeRolePolicyDocument, serviceName, a)
+	return fmt.Sprintf(formatAssumeRolePolicyDocument, serviceName)
 }
