@@ -3,17 +3,18 @@ package object
 import (
 	"bytes"
 	"context"
+	"errors"
+	"fmt"
 	"image"
 	"testing"
 
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 	"github.com/mububoki/graffiti"
 	"github.com/mububoki/graffiti/gif"
 	"github.com/mububoki/graffiti/jpeg"
 	"github.com/mububoki/graffiti/png"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/xerrors"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/env"
@@ -92,7 +93,7 @@ func TestRepository_Save(t *testing.T) {
 		{
 			name:        "NG: nil Image",
 			image:       &domain.Image{},
-			expectedErr: xerrors.Errorf("failed to Encode: %w", xerrors.New("misspecified image")),
+			expectedErr: fmt.Errorf("failed to Encode: %w", errors.New("misspecified image")),
 		},
 		{
 			name: "NG: failed to Save",
@@ -184,14 +185,14 @@ func TestRepository_Find(t *testing.T) {
 			format:      domain.ImageFormatJPEG,
 			bytesIMG:    bJPEG.Bytes(),
 			findErr:     testutil.ErrSome,
-			expectedErr: xerrors.Errorf("failed to Find: %w", testutil.ErrSome),
+			expectedErr: fmt.Errorf("failed to Find: %w", testutil.ErrSome),
 		},
 		{
 			name:        "NG: failed to DecodeImage",
 			imageName:   "test",
 			format:      domain.ImageFormatJPEG,
 			bytesIMG:    []byte("invalid image"),
-			expectedErr: xerrors.Errorf("failed to Decode: %w", xerrors.New("image: unknown format")),
+			expectedErr: fmt.Errorf("failed to Decode: %w", errors.New("image: unknown format")),
 		},
 	}
 

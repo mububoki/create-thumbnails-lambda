@@ -2,8 +2,7 @@ package image
 
 import (
 	"context"
-
-	"golang.org/x/xerrors"
+	"fmt"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/usecase/port"
@@ -24,16 +23,16 @@ func NewInteractor(repo port.ImageRepository, rate float64) *Interactor {
 func (i *Interactor) CreateThumbnail(ctx context.Context, name string, format domain.ImageFormat) error {
 	src, err := i.repo.Find(ctx, name, format, false)
 	if err != nil {
-		return xerrors.Errorf("failed to Find: %w", err)
+		return fmt.Errorf("failed to Find: %w", err)
 	}
 
 	dst, err := src.CreateThumbnail(i.rate)
 	if err != nil {
-		return xerrors.Errorf("failed to CreateThumbnail: %w", err)
+		return fmt.Errorf("failed to CreateThumbnail: %w", err)
 	}
 
 	if err := i.repo.Save(ctx, dst); err != nil {
-		return xerrors.Errorf("failed to Save: %w", err)
+		return fmt.Errorf("failed to Save: %w", err)
 	}
 
 	return nil

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"golang.org/x/xerrors"
+	"fmt"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/env"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/lambda"
@@ -13,7 +13,7 @@ import (
 func build() (*lambda.Handler, error) {
 	s3Handler, err := s3.NewHandler()
 	if err != nil {
-		return nil, xerrors.Errorf("failed to NewHandler: %w", err)
+		return nil, fmt.Errorf("failed to NewHandler: %w", err)
 	}
 
 	objectRepository := object.NewRepository(s3Handler, env.Object.BucketNameOriginal, env.Object.BucketNameThumbnail)

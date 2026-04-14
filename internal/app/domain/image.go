@@ -2,10 +2,17 @@ package domain
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"image"
 
 	"golang.org/x/image/draw"
-	"golang.org/x/xerrors"
+)
+
+const (
+	MaxImageWidth    = 10000
+	MaxImageHeight   = 10000
+	MaxImageFileSize = 50 * 1024 * 1024 // 50MB
 )
 
 type Image struct {
@@ -17,11 +24,11 @@ type Image struct {
 
 func (i *Image) CreateThumbnail(rate float64) (*Image, error) {
 	if rate <= 0 || rate >= 1 {
-		return nil, xerrors.New("rate must be in (0, 1)")
+		return nil, errors.New("rate must be in (0, 1)")
 	}
 
 	if i.IsThumbnail {
-		return nil, xerrors.New("image is already thumbnail")
+		return nil, errors.New("image is already thumbnail")
 	}
 
 	rectangle := i.Image.Bounds()
@@ -38,21 +45,30 @@ func (i *Image) CreateThumbnail(rate float64) (*Image, error) {
 
 func (i *Image) Encode() ([]byte, error) {
 	if i.Image == nil {
-		return nil, xerrors.New("misspecified image")
+		return nil, errors.New("misspecified image")
 	}
 
 	return i.Format.encode(i.Image)
 }
 
 func DecodeImage(src []byte, name string, isThumbnail bool) (*Image, error) {
+	if len(src) > MaxImageFileSize {
+		return nil, fmt.Errorf("file size %d exceeds maximum %d bytes", len(src), MaxImageFileSize)
+	}
+
 	img, f, err := image.Decode(bytes.NewReader(src))
 	if err != nil {
-		return nil, xerrors.Errorf("failed to Decode: %w", err)
+		return nil, fmt.Errorf("failed to Decode: %w", err)
+	}
+
+	bounds := img.Bounds()
+	if bounds.Dx() > MaxImageWidth || bounds.Dy() > MaxImageHeight {
+		return nil, fmt.Errorf("image dimensions %dx%d exceed maximum %dx%d", bounds.Dx(), bounds.Dy(), MaxImageWidth, MaxImageHeight)
 	}
 
 	var format ImageFormat
 	if err := format.UnmarshalText([]byte(f)); err != nil {
-		return nil, xerrors.Errorf("failed to UnmarshalText: %w", err)
+		return nil, fmt.Errorf("failed to UnmarshalText: %w", err)
 	}
 
 	return &Image{

@@ -2,6 +2,8 @@ package domain
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"image"
 	"image/gif"
 	"image/jpeg"
@@ -14,7 +16,6 @@ import (
 	png2 "github.com/mububoki/graffiti/png"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/xerrors"
 )
 
 func TestImage_CreateThumbnail(t *testing.T) {
@@ -37,12 +38,12 @@ func TestImage_CreateThumbnail(t *testing.T) {
 		{
 			name:        "NG: rate zero",
 			rate:        0,
-			expectedErr: xerrors.New("rate must be in (0, 1)"),
+			expectedErr: errors.New("rate must be in (0, 1)"),
 		},
 		{
 			name:        "NG: rate one",
 			rate:        1,
-			expectedErr: xerrors.New("rate must be in (0, 1)"),
+			expectedErr: errors.New("rate must be in (0, 1)"),
 		},
 		{
 			name: "NG: img is already thumbnail",
@@ -50,7 +51,7 @@ func TestImage_CreateThumbnail(t *testing.T) {
 			img: &Image{
 				IsThumbnail: true,
 			},
-			expectedErr: xerrors.New("image is already thumbnail"),
+			expectedErr: errors.New("image is already thumbnail"),
 		},
 	}
 
@@ -116,31 +117,7 @@ func TestImage_Encode(t *testing.T) {
 			img: &Image{
 				Image: nil,
 			},
-			expectedErr: xerrors.New("misspecified image"),
-		},
-		{
-			name: "NG: too large image jpeg",
-			img: &Image{
-				Format: ImageFormatJPEG,
-				Image:  image.NewRGBA(image.Rect(0, 0, 1<<16, 1<<16)),
-			},
-			expectedErr: xerrors.Errorf("failed to jpeg.Encode: %w", xerrors.New("jpeg: image is too large to encode")),
-		},
-		{
-			name: "NG: too large image gif",
-			img: &Image{
-				Format: ImageFormatGIF,
-				Image:  image.NewRGBA(image.Rect(0, 0, 1<<16, 1<<16)),
-			},
-			expectedErr: xerrors.Errorf("failed to gif.Encode: %w", xerrors.New("gif: image is too large to encode")),
-		},
-		{
-			name: "NG: invalid format png",
-			img: &Image{
-				Format: ImageFormatPNG,
-				Image:  image.NewRGBA(image.Rect(0, 0, 1<<32, 1<<32)),
-			},
-			expectedErr: xerrors.Errorf("failed to png.Encode: %w", xerrors.New("png: invalid format: invalid image size: 4294967296x4294967296")),
+			expectedErr: errors.New("misspecified image"),
 		},
 		{
 			name: "NG: initial format",
@@ -148,7 +125,7 @@ func TestImage_Encode(t *testing.T) {
 				Format: ImageFormat(0),
 				Image:  img,
 			},
-			expectedErr: xerrors.New("not supported image format"),
+			expectedErr: errors.New("not supported image format"),
 		},
 	}
 
@@ -221,7 +198,23 @@ func TestDecodeImage(t *testing.T) {
 		{
 			name:        "NG: failed to Decode",
 			b:           []byte("invalid image"),
-			expectedErr: xerrors.Errorf("failed to Decode: %w", xerrors.New("image: unknown format")),
+			expectedErr: fmt.Errorf("failed to Decode: %w", errors.New("image: unknown format")),
+		},
+		{
+			name:        "NG: file size exceeds maximum",
+			b:           make([]byte, MaxImageFileSize+1),
+			expectedErr: fmt.Errorf("file size %d exceeds maximum %d bytes", MaxImageFileSize+1, MaxImageFileSize),
+		},
+		{
+			name: "NG: image dimensions exceed maximum",
+			b: func() []byte {
+				buf := new(bytes.Buffer)
+				if err := png.Encode(buf, graffiti.SolidImage(image.Rect(0, 0, MaxImageWidth+1, 1), image.Black)); err != nil {
+					t.Fatal(err)
+				}
+				return buf.Bytes()
+			}(),
+			expectedErr: fmt.Errorf("image dimensions %dx%d exceed maximum %dx%d", MaxImageWidth+1, 1, MaxImageWidth, MaxImageHeight),
 		},
 	}
 

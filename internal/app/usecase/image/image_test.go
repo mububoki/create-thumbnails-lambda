@@ -2,14 +2,14 @@ package image
 
 import (
 	"context"
+	"fmt"
 	"image"
 	"testing"
 
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 	"github.com/mububoki/graffiti"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/xerrors"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/env"
@@ -58,13 +58,13 @@ func TestInteractor_CreateThumbnail(t *testing.T) {
 		{
 			name:        "NG: failed to Find",
 			findErr:     testutil.ErrSome,
-			expectedErr: xerrors.Errorf("failed to Find: %w", testutil.ErrSome),
+			expectedErr: fmt.Errorf("failed to Find: %w", testutil.ErrSome),
 		},
 		{
 			name:        "NG: failed to Save",
 			img:         img,
 			saveErr:     testutil.ErrSome,
-			expectedErr: xerrors.Errorf("failed to Save: %w", testutil.ErrSome),
+			expectedErr: fmt.Errorf("failed to Save: %w", testutil.ErrSome),
 		},
 	}
 

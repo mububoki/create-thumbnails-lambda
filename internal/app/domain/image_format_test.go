@@ -1,11 +1,11 @@
 package domain
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/xerrors"
 )
 
 func TestImageFormat_String(t *testing.T) {
@@ -73,7 +73,7 @@ func TestImageFormat_UnmarshalText(t *testing.T) {
 		},
 		{
 			name:        "NG: empty",
-			expectedErr: xerrors.New("invalid ImageFormat"),
+			expectedErr: errors.New("invalid ImageFormat"),
 		},
 	}
 

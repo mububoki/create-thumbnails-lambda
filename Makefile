@@ -8,9 +8,10 @@ GO_VET=$(GO_CMD) vet
 GO_GENERATE=$(GO_CMD) generate
 
 BIN_DIR=./bin
+APP_DIR=./cmd
 
 ALLFILE=./...
-MAIN_GO=$(APP_DIR)/main.go
+MAIN_GO=$(APP_DIR)
 
 build: clean-bin
 	$(GO_BUILD) -o $(BIN_DIR)/app $(MAIN_GO)
@@ -32,7 +33,7 @@ install-tools:
 	github.com/kisielk/errcheck@latest
 
 static-check:
-	$(GO_VET) $(ALLFIILE); errcheck $(ALLFILE)
+	$(GO_VET) $(ALLFILE); errcheck $(ALLFILE)
 
 generate:
 	$(GO_GENERATE) $(ALLFILE)
