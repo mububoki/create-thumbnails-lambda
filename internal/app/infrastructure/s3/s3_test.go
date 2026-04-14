@@ -3,15 +3,15 @@ package s3
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
+	"fmt"
+	"io"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/golang/mock/gomock"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/xerrors"
+	"go.uber.org/mock/gomock"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_s3"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/testutil"
@@ -42,13 +42,13 @@ func TestHandler_Save(t *testing.T) {
 		{
 			name:         "NG",
 			putObjectErr: testutil.ErrSome,
-			expectedErr:  xerrors.Errorf("failed to PutObjectWithContext: %w", testutil.ErrSome),
+			expectedErr:  fmt.Errorf("failed to PutObject: %w", testutil.ErrSome),
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			mockAPI.EXPECT().PutObjectWithContext(ctx, &s3.PutObjectInput{
+			mockAPI.EXPECT().PutObject(ctx, &s3.PutObjectInput{
 				Body:   bytes.NewReader(object),
 				Bucket: aws.String(bucketName),
 				Key:    aws.String(key),
@@ -88,20 +88,20 @@ func TestHandler_Find(t *testing.T) {
 		{
 			name: "OK",
 			getObjectRet: &s3.GetObjectOutput{
-				Body: ioutil.NopCloser(bytes.NewReader(object)),
+				Body: io.NopCloser(bytes.NewReader(object)),
 			},
 			expected: object,
 		},
 		{
-			name:         "NG: failed to GetObjectWithContext",
+			name:         "NG: failed to GetObject",
 			getObjectErr: testutil.ErrSome,
-			expectedErr:  xerrors.Errorf("failed to GetObjectWithContext: %w", testutil.ErrSome),
+			expectedErr:  fmt.Errorf("failed to GetObject: %w", testutil.ErrSome),
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			mockAPI.EXPECT().GetObjectWithContext(ctx, &s3.GetObjectInput{
+			mockAPI.EXPECT().GetObject(ctx, &s3.GetObjectInput{
 				Bucket: aws.String(bucketName),
 				Key:    aws.String(key),
 			}).Return(tc.getObjectRet, tc.getObjectErr)

@@ -2,13 +2,13 @@ package lambda
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/xerrors"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/mock/mock_controller"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/test/testutil"
@@ -63,7 +63,7 @@ func TestHandler_handleLambdaS3Events(t *testing.T) {
 			name:                "NG",
 			event:               event,
 			createThumbnailErrs: []error{nil, testutil.ErrSome},
-			expectedErr:         xerrors.Errorf("failed to CreateThumbnail: %w", testutil.ErrSome),
+			expectedErr:         fmt.Errorf("failed to CreateThumbnail: %w", testutil.ErrSome),
 		},
 	}
 

@@ -2,8 +2,7 @@ package object
 
 import (
 	"context"
-
-	"golang.org/x/xerrors"
+	"fmt"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/gateway"
@@ -29,7 +28,7 @@ func NewRepository(storage gateway.ObjectStorage, bucketNameOriginal string, buc
 func (repo *Repository) Save(ctx context.Context, img *domain.Image) error {
 	object, err := img.Encode()
 	if err != nil {
-		return xerrors.Errorf("failed to Encode: %w", err)
+		return fmt.Errorf("failed to Encode: %w", err)
 	}
 
 	return repo.storage.Save(ctx, object, keyImage(img.Name, img.Format), repo.bucketNameImage(img.IsThumbnail))
@@ -38,7 +37,7 @@ func (repo *Repository) Save(ctx context.Context, img *domain.Image) error {
 func (repo *Repository) Find(ctx context.Context, name string, format domain.ImageFormat, isThumbnail bool) (*domain.Image, error) {
 	bytesIMG, err := repo.storage.Find(ctx, keyImage(name, format), repo.bucketNameImage(isThumbnail))
 	if err != nil {
-		return nil, xerrors.Errorf("failed to Find: %w", err)
+		return nil, fmt.Errorf("failed to Find: %w", err)
 	}
 
 	return domain.DecodeImage(bytesIMG, name, isThumbnail)

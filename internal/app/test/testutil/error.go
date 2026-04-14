@@ -1,7 +1,7 @@
 package testutil
 
 import (
-	"golang.org/x/xerrors"
+	"errors"
 )
 
-var ErrSome = xerrors.New("some error")
+var ErrSome = errors.New("some error")

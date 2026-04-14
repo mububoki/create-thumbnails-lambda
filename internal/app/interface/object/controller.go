@@ -2,9 +2,9 @@ package object
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"strings"
-
-	"golang.org/x/xerrors"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/interface/controller"
@@ -27,12 +27,12 @@ func NewController(interactor interactor.ImageInteractor, bucketNameThumbnail st
 
 func (c *Controller) CreateThumbnail(ctx context.Context, key string, bucketName string) error {
 	if bucketName == c.bucketNameThumbnail {
-		return xerrors.New("src bucket and dst bucket is the same")
+		return errors.New("src bucket and dst bucket is the same")
 	}
 
 	name, format, err := extractNameAndFormat(key)
 	if err != nil {
-		return xerrors.Errorf("failed to extractNameAndFormat: %w", err)
+		return fmt.Errorf("failed to extractNameAndFormat: %w", err)
 	}
 
 	return c.interactor.CreateThumbnail(ctx, name, format)
@@ -41,12 +41,12 @@ func (c *Controller) CreateThumbnail(ctx context.Context, key string, bucketName
 func extractNameAndFormat(key string) (string, domain.ImageFormat, error) {
 	lastIDX := strings.LastIndex(key, ".")
 	if lastIDX < 0 || lastIDX > len(key)-1 {
-		return "", domain.ImageFormat(0), xerrors.New("misspecified separator")
+		return "", domain.ImageFormat(0), errors.New("misspecified separator")
 	}
 
 	var format domain.ImageFormat
 	if err := format.UnmarshalText([]byte(key[lastIDX+1:])); err != nil {
-		return "", domain.ImageFormat(0), xerrors.Errorf("failed to UnmarshalText: %w", err)
+		return "", domain.ImageFormat(0), fmt.Errorf("failed to UnmarshalText: %w", err)
 	}
 
 	return key[:lastIDX], format, nil

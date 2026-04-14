@@ -2,13 +2,14 @@ package object
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"strings"
 	"testing"
 
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/xerrors"
 
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/domain"
 	"github.com/mububoki/create-thumbnails-lambda/internal/app/infrastructure/env"
@@ -55,19 +56,19 @@ func TestController_CreateThumbnail(t *testing.T) {
 		{
 			name:        "NG: src bucket == dst bucket",
 			bucketName:  env.Object.BucketNameThumbnail,
-			expectedErr: xerrors.New("src bucket and dst bucket is the same"),
+			expectedErr: errors.New("src bucket and dst bucket is the same"),
 		},
 		{
 			name:        "NG: invalid key format",
 			key:         "test",
 			bucketName:  env.Object.BucketNameOriginal,
-			expectedErr: xerrors.Errorf("failed to extractNameAndFormat: %w", xerrors.New("misspecified separator")),
+			expectedErr: fmt.Errorf("failed to extractNameAndFormat: %w", errors.New("misspecified separator")),
 		},
 		{
 			name:        "NG: invalid image format",
 			key:         "test.jpg.gz",
 			bucketName:  env.Object.BucketNameOriginal,
-			expectedErr: xerrors.Errorf("failed to extractNameAndFormat: %w", xerrors.Errorf("failed to UnmarshalText: %w", xerrors.New("invalid ImageFormat"))),
+			expectedErr: fmt.Errorf("failed to extractNameAndFormat: %w", fmt.Errorf("failed to UnmarshalText: %w", errors.New("invalid ImageFormat"))),
 		},
 		{
 			name:               "NG: interactor.CreateThumbnailErr",
