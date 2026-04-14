@@ -37,3 +37,8 @@ static-check:
 
 generate:
 	$(GO_GENERATE) $(ALLFILE)
+
+SETUP_DIR=./cmd/setup
+
+create-iam-role:
+	$(GO_RUN) $(SETUP_DIR) create-iam-role
