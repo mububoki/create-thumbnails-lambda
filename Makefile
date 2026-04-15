@@ -42,3 +42,9 @@ SETUP_DIR=./cmd/setup
 
 create-iam-role:
 	$(GO_RUN) $(SETUP_DIR) create-iam-role
+
+create-s3-buckets:
+	$(GO_RUN) $(SETUP_DIR) create-s3-buckets
+
+delete-s3-buckets:
+	$(GO_RUN) $(SETUP_DIR) delete-s3-buckets
