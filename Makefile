@@ -6,6 +6,7 @@ GO_GET=$(GO_CMD) get -u
 GO_RUN=$(GO_CMD) run
 GO_VET=$(GO_CMD) vet
 GO_GENERATE=$(GO_CMD) generate
+.PHONY: build run clean clean-bin test install-tools static-check generate create-iam-role create-s3-buckets delete-s3-buckets
 
 BIN_DIR=./bin
 APP_DIR=./cmd
