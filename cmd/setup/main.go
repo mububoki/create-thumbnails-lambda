@@ -8,7 +8,7 @@ import (
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Fprintln(os.Stderr, "usage: setup <action>")
-		fmt.Fprintln(os.Stderr, "actions: create-iam-role, create-s3-buckets, delete-s3-buckets")
+		fmt.Fprintln(os.Stderr, "actions: create-iam-role, create-s3-buckets, delete-s3-buckets, create-lambda-function, update-lambda-function")
 		os.Exit(1)
 	}
 
@@ -20,6 +20,10 @@ func main() {
 		err = createS3Buckets()
 	case "delete-s3-buckets":
 		err = deleteS3Buckets()
+	case "create-lambda-function":
+		err = createLambdaFunction()
+	case "update-lambda-function":
+		err = updateLambdaFunction()
 	default:
 		fmt.Fprintf(os.Stderr, "unknown action: %s\n", os.Args[1])
 		os.Exit(1)
