@@ -6,6 +6,7 @@ GO_GET=$(GO_CMD) get -u
 GO_RUN=$(GO_CMD) run
 GO_VET=$(GO_CMD) vet
 GO_GENERATE=$(GO_CMD) generate
+.PHONY: build run clean clean-bin test install-tools static-check generate create-iam-role create-s3-buckets delete-s3-buckets
 
 BIN_DIR=./bin
 APP_DIR=./cmd
@@ -42,3 +43,9 @@ SETUP_DIR=./cmd/setup
 
 create-iam-role:
 	$(GO_RUN) $(SETUP_DIR) create-iam-role
+
+create-s3-buckets:
+	$(GO_RUN) $(SETUP_DIR) create-s3-buckets
+
+delete-s3-buckets:
+	$(GO_RUN) $(SETUP_DIR) delete-s3-buckets
