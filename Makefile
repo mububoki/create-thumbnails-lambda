@@ -2,7 +2,7 @@ GO_CMD=go
 GO_BUILD=$(GO_CMD) build
 GO_CLEAN=$(GO_CMD) clean
 GO_TEST=$(GO_CMD) test
-GO_GET=$(GO_CMD) get -u
+GO_INSTALL=$(GO_CMD) install
 GO_RUN=$(GO_CMD) run
 GO_VET=$(GO_CMD) vet
 GO_GENERATE=$(GO_CMD) generate
@@ -30,11 +30,10 @@ test:
 	$(GO_TEST) $(ALLFILE)
 
 install-tools:
-	$(GO_GET) \
-	github.com/kisielk/errcheck@latest
+	$(GO_INSTALL) github.com/kisielk/errcheck@latest
 
 static-check:
-	$(GO_VET) $(ALLFILE); errcheck $(ALLFILE)
+	$(GO_VET) $(ALLFILE) && errcheck $(ALLFILE)
 
 generate:
 	$(GO_GENERATE) $(ALLFILE)
